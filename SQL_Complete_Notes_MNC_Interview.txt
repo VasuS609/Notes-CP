@@ -1,0 +1,1176 @@
+================================================================================
+                    SQL COMPLETE NOTES — FROM ZERO TO MNC INTERVIEW READY
+                 (Based on "SQL Complete Course in 3 Hours" + Extra Interview Content)
+================================================================================
+How to use this file:
+ - This is a single revision file. Read top to bottom once, then use it for quick revision.
+ - Every SQL keyword is written in UPPERCASE for easy scanning (SQL itself is case-insensitive).
+ - Sections marked [INTERVIEW Q&A] give ready-made answers to common questions.
+================================================================================
+
+
+TABLE OF CONTENTS
+-----------------
+1.  Database & DBMS Basics
+2.  RDBMS vs Non-Relational (NoSQL) Databases
+3.  What is SQL? SQL vs "Sequel"
+4.  Database Structure: Tables, Rows, Columns, Schema
+5.  Types of SQL Commands (DDL, DQL, DML, DCL, TCL)
+6.  SQL Data Types (Detailed)
+7.  Database-Level Queries (CREATE, DROP, USE, SHOW)
+8.  Table Creation & Schema Design
+9.  Constraints (NOT NULL, UNIQUE, DEFAULT, CHECK, AUTO_INCREMENT)
+10. Keys (Primary, Foreign, Candidate, Composite, Unique, Super Key)
+11. CRUD Operations: INSERT, SELECT, UPDATE, DELETE
+12. ALTER TABLE (ADD/DROP/MODIFY/CHANGE/RENAME)
+13. DROP vs TRUNCATE vs DELETE  [Very important interview Q]
+14. Operators in SQL (Comparison, Logical, BETWEEN, IN, LIKE, IS NULL)
+15. WHERE Clause
+16. DISTINCT
+17. ORDER BY and LIMIT
+18. Aggregate Functions (COUNT, SUM, AVG, MIN, MAX)
+19. GROUP BY and HAVING
+20. WHERE vs HAVING  [Very important interview Q]
+21. JOINS (Inner, Left, Right, Full, Self, Cross, Exclusive Joins)
+22. UNION vs UNION ALL
+23. Subqueries (Nested Queries) — WHERE / FROM / SELECT types
+24. Correlated vs Non-Correlated Subqueries [INTERVIEW ADD-ON]
+25. Views
+26. Indexes [INTERVIEW ADD-ON]
+27. Normalization (1NF, 2NF, 3NF, BCNF) [INTERVIEW ADD-ON]
+28. Transactions & ACID Properties [INTERVIEW ADD-ON]
+29. Stored Procedures, Functions & Triggers [INTERVIEW ADD-ON]
+30. Window Functions (ROW_NUMBER, RANK, DENSE_RANK, OVER, PARTITION BY) [INTERVIEW ADD-ON]
+31. Common String, Date & Numeric Functions [INTERVIEW ADD-ON]
+32. Order of Execution of a SQL Query [Very important interview Q]
+33. SQL vs NoSQL — Quick Comparison Table [INTERVIEW ADD-ON]
+34. Most Frequently Asked SQL Interview Questions (with short answers)
+35. Final Revision Cheat-Sheet (one-page summary)
+
+================================================================================
+1. DATABASE & DBMS BASICS
+================================================================================
+- DATABASE = a collection of data, stored digitally, in an easily accessible
+  and organized format, so it can be added, deleted, updated or searched easily.
+- DBMS (Database Management System) = software that manages a database.
+  Users never talk to the database directly — they interact with the DBMS,
+  which acts as a middle layer and performs the actual read/write on the DB.
+- We use SQL to "talk to" / interact with a DBMS.
+
+  User  <--->  DBMS (software layer)  <--->  Database (actual stored data)
+
+- CRUD = the 4 major operations any DBMS supports:
+    C – Create  (add new data)
+    R – Read    (view/search existing data)
+    U – Update  (modify existing data)
+    D – Delete  (remove data)
+
+================================================================================
+2. RDBMS vs NON-RELATIONAL (NoSQL) DATABASES
+================================================================================
+RDBMS (Relational Database Management System)
+ - Data is stored in the form of TABLES (rows & columns) — like a class register.
+ - Understood using SQL.
+ - Examples: MySQL, Oracle, Microsoft SQL Server, PostgreSQL, SQLite.
+
+Non-Relational / NoSQL Databases
+ - Data is NOT stored in tables; stored as documents/key-value/graphs etc.
+ - SQL cannot be used to query them directly (hence "NoSQL").
+ - Example: MongoDB (document-based).
+
+[INTERVIEW ADD-ON] Quick difference table:
+  RDBMS                          | NoSQL
+  --------------------------------|--------------------------------
+  Structured, table-based schema  | Flexible/dynamic schema
+  Vertically scalable (bigger     | Horizontally scalable (more
+    server)                       |   servers/nodes)
+  ACID compliant                  | Mostly BASE (eventual consistency)
+  Good for complex queries/joins  | Good for huge unstructured/fast data
+  Examples: MySQL, Oracle, MSSQL  | Examples: MongoDB, Cassandra, Redis
+
+This course focuses on RDBMS, specifically MySQL.
+
+================================================================================
+3. WHAT IS SQL? SQL vs "SEQUEL"
+================================================================================
+- SQL = Structured Query Language.
+- A programming language used to interact with (create, read, update, delete
+  data in) relational databases.
+- Trivia: SQL was originally called "SEQUEL" (Structured English Query
+  Language), created by IBM. Later renamed to SQL, but people still commonly
+  pronounce/call it "sequel". Both pronunciations are acceptable — there is
+  no "correct" one.
+- Installation: We install MySQL Community Server (the actual database
+  engine/DBMS) + MySQL Workbench (a GUI tool to write and run SQL queries,
+  visually see schemas/tables, manage the server, etc.)
+  In MySQL Workbench:
+    - Middle panel  -> where you write SQL queries
+    - Left "Schemas" tab -> shows all databases & their tables
+    - Bottom "Action Output" -> shows success/error of each query run
+    - Ctrl+S / Cmd+S -> save your query file as a .sql file
+
+================================================================================
+4. DATABASE STRUCTURE: TABLES, ROWS, COLUMNS, SCHEMA
+================================================================================
+- A DATABASE contains many TABLES. Each table stores a particular, related
+  set of data (e.g., in a "College" database: Student table, Fees table,
+  Course table).
+- A TABLE = combination of ROWS and COLUMNS.
+    - COLUMNS (vertical)   -> define the structure/design of the table
+                              (what type of info is stored: RollNo, Name,
+                              Age, DOB, Gender, City, Marks etc.)
+    - ROWS (horizontal)    -> represent one individual record
+                              (e.g., one row = one particular student's
+                              complete data)
+- SCHEMA = the "design" of a database/table — i.e., which columns exist and
+  what their data types are.
+
+================================================================================
+5. TYPES OF SQL COMMANDS
+================================================================================
+SQL commands are classified into 5 categories:
+
+1. DDL – Data Definition Language
+   Defines/changes the structure (schema) of the database.
+   Commands: CREATE, DROP, ALTER, RENAME, TRUNCATE
+
+2. DQL – Data Query Language
+   Used to fetch/read data from the database.
+   Command: SELECT
+
+3. DML – Data Manipulation Language
+   Used to modify the actual data (rows) stored in tables.
+   Commands: INSERT, UPDATE, DELETE
+
+4. DCL – Data Control Language
+   Used to grant/revoke permissions/access to users.
+   Commands: GRANT, REVOKE
+   Example use-case: Accounts team should access the Fees table; Teachers
+   should access the Marks table — DCL controls who can see/do what.
+
+5. TCL – Transaction Control Language
+   Used to manage transactions (a group of operations that should succeed
+   or fail together).
+   Commands: COMMIT, ROLLBACK, SAVEPOINT
+   (See Section 28 for full detail — very important for interviews.)
+
+[INTERVIEW Q&A] "Which category does SELECT belong to?" -> DQL.
+[INTERVIEW Q&A] "Is TRUNCATE DDL or DML?" -> DDL (it resets table structure
+  internally, even though it deletes data).
+
+================================================================================
+6. SQL DATA TYPES (DETAILED)
+================================================================================
+A) STRING / CHARACTER TYPES
+   - CHAR(n)     : Fixed-length string. Always reserves n bytes of memory,
+                   even if actual data is shorter -> can waste memory.
+   - VARCHAR(n)  : Variable-length string (max length n, 0–255 typical,
+                   can go higher in modern MySQL). Only uses as much memory
+                   as needed for the actual data -> memory efficient.
+                   ** VARCHAR is preferred over CHAR in almost all real
+                   use-cases for this reason. **
+   - BLOB        : Binary Large Object. Used to store large binary data
+                   like files/images (size up to 65,535 bytes for BLOB;
+                   larger variants: MEDIUMBLOB, LONGBLOB exist).
+   - TEXT        : For very long text content (articles, descriptions).
+
+B) NUMERIC TYPES
+   - INT (INTEGER)     : Whole numbers, positive or negative.
+   - TINYINT           : Smaller range integer (-128 to 127 by default).
+   - SMALLINT, MEDIUMINT, BIGINT : Increasing integer ranges.
+   - BIT(x)            : Stores x-bit values (x = 1 to 64). BIT(1) stores
+                         a single 0/1 — MySQL uses TINYINT/BIT to simulate
+                         BOOLEAN since it has no native boolean type.
+   - FLOAT             : Decimal numbers with limited precision (~23 digits).
+   - DOUBLE            : Decimal numbers with higher precision than FLOAT
+                         (use for large/precise decimal values).
+   - DECIMAL(p,s)      : Exact fixed-point decimal (best for money values,
+                         since FLOAT/DOUBLE can have rounding errors)
+                         [INTERVIEW ADD-ON — commonly asked: "why use
+                         DECIMAL for salary/price instead of FLOAT?"]
+   - BOOLEAN           : True/False. Internally MySQL stores it as TINYINT
+                         (0 = false, 1 = true) since MySQL has no true
+                         native BOOLEAN type.
+
+C) DATE / TIME TYPES
+   - DATE       : Stores only date (YYYY-MM-DD)
+   - TIME       : Stores only time (HH:MM:SS)
+   - DATETIME   : Stores date + time
+   - TIMESTAMP  : Stores date + time, auto-updates, timezone-aware
+                  [INTERVIEW ADD-ON: DATETIME vs TIMESTAMP — TIMESTAMP has
+                  a smaller range (1970–2038) and is timezone-sensitive;
+                  DATETIME has a larger range and is timezone-independent]
+   - YEAR       : Stores only year
+
+D) SIGNED vs UNSIGNED [Important nuance]
+   - By default, numeric types are SIGNED — i.e., they can hold both
+     negative and positive values (e.g., TINYINT: -128 to 127).
+   - If a column will only ever hold positive values (e.g., Age, Salary,
+     Quantity), mark it UNSIGNED. This shifts the range to start from 0,
+     effectively doubling the positive range you can store
+     (e.g., TINYINT UNSIGNED: 0 to 255 instead of -128 to 127).
+   - Syntax: age TINYINT UNSIGNED
+
+================================================================================
+7. DATABASE-LEVEL QUERIES
+================================================================================
+-- Create a new database
+CREATE DATABASE college;
+
+-- Create only if it doesn't already exist (BEST PRACTICE — avoids errors,
+-- gives only a harmless warning instead)
+CREATE DATABASE IF NOT EXISTS college;
+
+-- Delete/drop a database
+DROP DATABASE college;
+
+-- Drop only if it exists (BEST PRACTICE — avoids errors)
+DROP DATABASE IF EXISTS college;
+
+-- Tell MySQL which database to "use" for all following commands
+USE college;
+
+-- List all databases on the server
+SHOW DATABASES;
+
+-- List all tables inside the currently used database
+SHOW TABLES;
+
+NOTE: SQL keywords are NOT case-sensitive (create database and CREATE
+DATABASE both work identically). However, it is best practice to write
+SQL keywords in UPPERCASE — it makes queries far more readable, since
+keywords get visually separated from your table/column names.
+
+================================================================================
+8. TABLE CREATION & SCHEMA DESIGN
+================================================================================
+Basic syntax:
+
+CREATE TABLE table_name (
+    column1_name  DATA_TYPE  CONSTRAINT,
+    column2_name  DATA_TYPE  CONSTRAINT,
+    column3_name  DATA_TYPE  CONSTRAINT
+);
+
+Example:
+CREATE TABLE student (
+    id     INT PRIMARY KEY,
+    name   VARCHAR(50),
+    age    INT NOT NULL
+);
+
+- Before creating a table, always plan its schema on paper first: what
+  columns are needed, and what data type/constraint fits each one.
+- View table structure inside MySQL Workbench: expand Schema -> Tables ->
+  right-click table -> or click the "i" (info) icon to see columns visually.
+
+================================================================================
+9. CONSTRAINTS
+================================================================================
+Constraints are RULES applied on a column to control what kind of data can
+be stored in it.
+
+- NOT NULL     : Column cannot be left empty for any row.
+                 e.g., age INT NOT NULL
+- UNIQUE       : All values in this column must be different from each other.
+- DEFAULT      : If no value is given, a pre-set default value is used.
+                 e.g., age INT DEFAULT 18
+- PRIMARY KEY  : Combination of NOT NULL + UNIQUE. Uniquely identifies each
+                 row (see Section 10 for full detail).
+- FOREIGN KEY  : Links a column to the Primary Key of another table
+                 (see Section 10).
+- CHECK [INTERVIEW ADD-ON] : Restricts values to a condition.
+                 e.g., age INT CHECK (age >= 18)
+- AUTO_INCREMENT [INTERVIEW ADD-ON] : Automatically generates the next
+                 sequential number for a column (usually used with
+                 Primary Key IDs so you don't have to manually assign IDs).
+                 e.g., id INT PRIMARY KEY AUTO_INCREMENT
+
+================================================================================
+10. KEYS (PRIMARY, FOREIGN, CANDIDATE, COMPOSITE, UNIQUE, SUPER KEY)
+================================================================================
+PRIMARY KEY
+ - A column (or combination of columns) that uniquely identifies each row
+   in a table.
+ - Rules: must be UNIQUE for every row + must be NOT NULL (can never be
+   empty).
+ - A table can have only ONE Primary Key.
+ - Example: student_id can be a Primary Key (unique per student), but
+   "name" cannot (two students can share the same name), and "salary"
+   cannot (two employees can have the same salary).
+
+FOREIGN KEY
+ - A column (or set of columns) in one table that refers to the PRIMARY
+   KEY of another table.
+ - Used to create a "relationship" / link between two tables.
+ - A Foreign Key value CAN be NULL, and it does NOT need to be unique
+   (many rows in the "child" table can point to the same Primary Key row
+   in the "parent" table).
+ - A table can have MULTIPLE Foreign Keys (unlike Primary Key, which is
+   always just one).
+
+[INTERVIEW Q&A] "Primary Key vs Foreign Key — key differences?"
+  Primary Key                      | Foreign Key
+  -----------------------------------|-----------------------------------
+  Unique + Not Null (always)        | Can have duplicates, can be NULL
+  Only ONE per table                | Can have MULTIPLE per table
+  Uniquely identifies own table's   | Refers to another table's Primary
+    rows                            |    Key -> establishes relationship
+  Does not allow NULL               | Allows NULL
+
+[INTERVIEW ADD-ON — additional key types you should know]:
+ - CANDIDATE KEY: Any column (or combination) that COULD qualify to be
+   the Primary Key (i.e., it's unique + not null). A table can have
+   multiple candidate keys; only one of them is chosen as the Primary Key.
+ - SUPER KEY: Any combination of columns that can uniquely identify a row
+   (a superset of candidate keys — may include extra/unnecessary columns).
+ - COMPOSITE (COMPOSITE/COMPOUND) KEY: A Primary Key made up of TWO OR
+   MORE columns combined (used when no single column is unique enough
+   on its own, e.g., in a table storing (student_id, subject_id) marks,
+   the combination of both columns together is unique, even if neither
+   column is unique alone).
+ - ALTERNATE KEY: A candidate key that was NOT chosen as the Primary Key.
+ - UNIQUE KEY: Like Primary Key (enforces uniqueness) but DOES allow one
+   NULL value, and a table can have multiple Unique Keys.
+
+================================================================================
+11. CRUD OPERATIONS: INSERT, SELECT, UPDATE, DELETE
+================================================================================
+A) INSERT — add new data (DML)
+INSERT INTO student (id, name, age) VALUES (1, 'Aman', 26);
+-- Insert multiple rows at once:
+INSERT INTO student (id, name, age) VALUES
+    (2, 'Shraddha', 24),
+    (3, 'Bhumika', 22);
+
+B) SELECT — read/view data (DQL)
+SELECT * FROM student;               -- '*' means ALL columns
+SELECT name, age FROM student;       -- only specific columns
+
+C) UPDATE — modify existing data (DML)
+UPDATE student SET grade = 'O' WHERE grade = 'A';
+UPDATE student SET marks = 82 WHERE roll_number = 105;
+
+[INTERVIEW ADD-ON / Practical Gotcha] MySQL Workbench has "Safe Update
+Mode" turned ON by default, which blocks UPDATE/DELETE queries that don't
+use a Primary Key in the WHERE clause (to prevent accidental mass
+updates). To temporarily disable it for the session:
+  SET SQL_SAFE_UPDATES = 0;    -- turns safe mode OFF
+  SET SQL_SAFE_UPDATES = 1;    -- turns safe mode back ON
+
+** WARNING: If you run UPDATE or DELETE WITHOUT a WHERE clause, it will
+   affect ALL rows in the table! Always double-check your WHERE clause
+   before running UPDATE/DELETE, especially in production databases. **
+
+D) DELETE — remove data (DML)
+DELETE FROM student WHERE marks < 80;   -- deletes only matching rows
+DELETE FROM student;                     -- deletes ALL rows (careful!)
+
+================================================================================
+12. ALTER TABLE (ADD / DROP / MODIFY / CHANGE / RENAME)
+================================================================================
+ALTER TABLE is a DDL command used to change the STRUCTURE of an existing
+table (add/remove/rename columns, change data types, rename the table).
+
+-- Add a new column (with constraint + default value)
+ALTER TABLE student ADD COLUMN age INT NOT NULL DEFAULT 19;
+
+-- MODIFY a column: change its data type / constraint (keep same name)
+ALTER TABLE student MODIFY COLUMN age VARCHAR(2);
+
+-- CHANGE a column: rename it AND/OR change its data type
+ALTER TABLE student CHANGE age student_age INT;
+   -- CHANGE requires you to always re-state the new data type,
+   -- even if you're only renaming.
+   -- MODIFY is used when only the type/constraint changes, not the name.
+
+-- Drop (delete) a column entirely
+ALTER TABLE student DROP COLUMN grade;
+
+-- Rename the whole table
+ALTER TABLE student RENAME TO stu;
+
+[INTERVIEW Q&A] "Difference between MODIFY and CHANGE in MySQL?"
+  MODIFY -> changes data type/constraint of a column, but keeps its name.
+  CHANGE -> can rename the column AND change its data type in one command
+            (you must specify the new data type even if unchanged).
+
+================================================================================
+13. DROP vs TRUNCATE vs DELETE   [VERY COMMON INTERVIEW QUESTION]
+================================================================================
+  Command   | Type | What it does                | Rollback?  | Resets
+            |      |                              | possible?  | AUTO_INCREMENT?
+  ----------|------|------------------------------|------------|------------------
+  DROP      | DDL  | Deletes the ENTIRE table     | No         | N/A (table gone)
+            |      | (structure + data both gone) |            |
+  TRUNCATE  | DDL  | Deletes ALL DATA but keeps   | No (in     | Yes, resets it
+            |      | the table structure intact   | most DBs)  |
+  DELETE    | DML  | Deletes data (all rows or    | Yes (can   | No, keeps
+            |      | specific rows via WHERE)     | use        | counting from
+            |      |                              | ROLLBACK)  | where it left off
+
+- DROP TABLE student;      -> table itself no longer exists at all.
+- TRUNCATE TABLE student;  -> table still exists (empty), can re-insert
+  data immediately, same schema/columns remain.
+- DELETE FROM student WHERE ...; -> can delete selectively; is logged
+  row-by-row so it's slower than TRUNCATE for deleting everything, but it
+  CAN be rolled back within a transaction (TRUNCATE generally cannot be
+  rolled back, and is much faster since it deallocates data pages
+  directly instead of deleting row-by-row).
+
+[INTERVIEW Q&A] "When would you use TRUNCATE instead of DELETE?"
+  When you want to quickly wipe ALL data from a table but keep using the
+  same table/schema afterward, and you don't need row-level conditions
+  or the ability to roll back.
+
+================================================================================
+14. OPERATORS IN SQL
+================================================================================
+A) COMPARISON OPERATORS
+   =    equal to
+   !=  or  <>   not equal to
+   >    greater than
+   <    less than
+   >=   greater than or equal to
+   <=   less than or equal to
+
+B) LOGICAL OPERATORS
+   AND   -> both conditions must be true
+   OR    -> at least one condition must be true
+   NOT   -> reverses/negates a condition
+
+C) BETWEEN operator — checks if a value lies within a range (inclusive)
+   SELECT * FROM student WHERE marks BETWEEN 60 AND 90;
+
+D) IN operator — checks if a value matches ANY value in a given list
+   SELECT * FROM student WHERE roll_number IN (102, 104, 106);
+   (Very useful with subqueries — see Section 23)
+
+E) IS NULL / IS NOT NULL — used to check for NULL values
+   ** You CANNOT use "= NULL" to check for null — it will not work.
+      You must always use IS NULL / IS NOT NULL. **
+   SELECT * FROM student WHERE city IS NULL;
+
+F) [INTERVIEW ADD-ON] LIKE operator + Wildcards — for pattern matching
+   in text (extremely commonly used, MUST know for interviews even
+   though not covered in the base video):
+   %  -> matches ANY sequence of characters (zero or more)
+   _  -> matches exactly ONE character
+
+   SELECT * FROM student WHERE name LIKE 'A%';     -- names starting with A
+   SELECT * FROM student WHERE name LIKE '%a';     -- names ending with a
+   SELECT * FROM student WHERE name LIKE '%an%';   -- names containing 'an'
+   SELECT * FROM student WHERE name LIKE '_oe';    -- 3-letter word ending 'oe' (e.g. Joe)
+   SELECT * FROM student WHERE name NOT LIKE 'A%'; -- names NOT starting with A
+
+================================================================================
+15. WHERE CLAUSE
+================================================================================
+- Used to FILTER rows based on a condition — only rows matching the
+  condition are returned/affected.
+- Works with SELECT, UPDATE, and DELETE.
+- Syntax: SELECT columns FROM table WHERE condition;
+- Can combine multiple conditions using AND / OR / NOT.
+  SELECT * FROM student WHERE marks > 80 AND city = 'Delhi';
+
+================================================================================
+16. DISTINCT
+================================================================================
+- Removes duplicate values from the result — returns only UNIQUE values.
+  SELECT DISTINCT city FROM student;
+  -- If 5 students are from Delhi, "Delhi" will show only ONCE in the result.
+- Can be applied to multiple columns too — then uniqueness is checked on
+  the COMBINATION of those columns.
+
+================================================================================
+17. ORDER BY and LIMIT
+================================================================================
+ORDER BY — sorts the result set by one or more columns.
+  SELECT * FROM student ORDER BY marks;          -- ascending (default)
+  SELECT * FROM student ORDER BY marks ASC;      -- explicitly ascending
+  SELECT * FROM student ORDER BY marks DESC;     -- descending
+  SELECT * FROM student ORDER BY city, marks DESC;  -- multiple columns
+
+LIMIT — restricts the NUMBER of rows returned.
+  SELECT * FROM student LIMIT 5;                  -- only first 5 rows
+  SELECT * FROM student ORDER BY marks DESC LIMIT 3;  -- top 3 scorers
+
+[INTERVIEW ADD-ON] LIMIT with OFFSET (for pagination):
+  SELECT * FROM student LIMIT 5 OFFSET 10;   -- skip first 10, then get 5
+  -- Commonly used in interviews for "find the Nth highest salary" type
+  -- questions, e.g.:
+  SELECT DISTINCT salary FROM employee ORDER BY salary DESC LIMIT 1 OFFSET 1;
+  -- (this returns the 2nd highest salary)
+
+================================================================================
+18. AGGREGATE FUNCTIONS
+================================================================================
+Aggregate functions perform a calculation on MULTIPLE rows and return a
+SINGLE summary value.
+
+  COUNT(*)      -> counts number of rows
+  COUNT(column) -> counts non-NULL values in that column
+  SUM(column)   -> adds up all values
+  AVG(column)   -> calculates average
+  MIN(column)   -> smallest value
+  MAX(column)   -> largest value
+
+  SELECT AVG(marks) FROM student;
+  SELECT COUNT(*) FROM student WHERE city = 'Mumbai';
+  SELECT MAX(marks) FROM student WHERE city = 'Delhi';
+
+IMPORTANT RULE: Aggregate functions return a SINGLE row/value. If you try
+to use them inside a subquery expected to return multiple rows/values
+where a single value is required, you'll get an error like:
+"Subquery returns more than 1 row".
+
+================================================================================
+19. GROUP BY and HAVING
+================================================================================
+GROUP BY — groups rows that have the SAME value in a specified column
+into summary rows, usually used together with an aggregate function.
+
+  SELECT city, COUNT(name) FROM student GROUP BY city;
+  -- groups all students by city, and counts how many students per city
+
+  SELECT grade, COUNT(*) FROM student GROUP BY grade ORDER BY grade;
+
+Rule: any column in SELECT that is NOT inside an aggregate function MUST
+also appear in the GROUP BY clause (otherwise the result is ambiguous/
+undefined in strict SQL mode).
+
+HAVING — filters GROUPS (used AFTER GROUP BY), similar to how WHERE
+filters individual rows. HAVING can use aggregate functions in its
+condition; WHERE cannot.
+
+  SELECT city, MAX(marks) FROM student
+  GROUP BY city
+  HAVING MAX(marks) > 90;
+
+================================================================================
+20. WHERE vs HAVING   [VERY COMMON INTERVIEW QUESTION]
+================================================================================
+  WHERE                              | HAVING
+  -----------------------------------|-----------------------------------
+  Filters individual ROWS            | Filters GROUPS (after GROUP BY)
+  Applied BEFORE grouping            | Applied AFTER grouping
+  Cannot use aggregate functions     | CAN use aggregate functions
+    (e.g., WHERE COUNT(*) > 5 fails) | (e.g., HAVING COUNT(*) > 5 works)
+  Used with SELECT/UPDATE/DELETE     | Used only with GROUP BY (SELECT)
+
+Correct order in a query: SELECT ... FROM ... WHERE ... GROUP BY ...
+HAVING ... ORDER BY ... LIMIT ...  (see Section 32 for full execution order)
+
+================================================================================
+21. JOINS
+================================================================================
+JOINS combine rows from two or more tables based on a related column
+between them (often a Primary Key <-> Foreign Key relationship, though
+that relationship is not compulsory to perform a join).
+
+Example tables used throughout:
+  student(id, name)             course(student_id, course_name)
+
+A) INNER JOIN
+   Returns only records that have MATCHING values in BOTH tables
+   (the "overlapping"/common data).
+   SELECT * FROM student
+   INNER JOIN course ON student.id = course.student_id;
+   -- Order of tables doesn't matter for INNER JOIN result.
+
+B) LEFT JOIN (LEFT OUTER JOIN)
+   Returns ALL records from the LEFT table + only the MATCHING records
+   from the right table. Non-matching right-side columns show as NULL.
+   SELECT * FROM student
+   LEFT JOIN course ON student.id = course.student_id;
+   -- The table written FIRST (after FROM) becomes the "left" table.
+
+C) RIGHT JOIN (RIGHT OUTER JOIN)
+   Returns ALL records from the RIGHT table + only the MATCHING records
+   from the left table. Non-matching left-side columns show as NULL.
+   SELECT * FROM student
+   RIGHT JOIN course ON student.id = course.student_id;
+
+D) FULL JOIN (FULL OUTER JOIN)
+   Returns ALL records when there is a match in EITHER left OR right
+   table (i.e., everything from both tables, matched where possible,
+   NULL where not).
+   ** MySQL does NOT support FULL JOIN directly ** (Oracle/PostgreSQL do).
+   In MySQL, simulate it using UNION of LEFT JOIN and RIGHT JOIN:
+   SELECT * FROM student LEFT JOIN course ON student.id = course.student_id
+   UNION
+   SELECT * FROM student RIGHT JOIN course ON student.id = course.student_id;
+   (UNION automatically removes duplicate/overlapping rows, giving a
+   clean full-outer-join-like result.)
+
+E) SELF JOIN
+   Joining a table with ITSELF. Useful when a table has a relationship
+   within its own rows — classic example: an Employee table where each
+   employee has a "manager_id" that refers to another employee's id in
+   the SAME table.
+   SELECT a.name AS employee_name, b.name AS manager_name
+   FROM employee a
+   JOIN employee b ON a.manager_id = b.id;
+   (Uses table aliases "a" and "b" to distinguish the two "copies")
+
+F) [INTERVIEW ADD-ON] CROSS JOIN
+   Returns the CARTESIAN PRODUCT of both tables — every row of table A
+   combined with every row of table B (no ON condition needed).
+   If table A has 3 rows and table B has 4 rows, result = 12 rows.
+   SELECT * FROM table_a CROSS JOIN table_b;
+
+G) EXCLUSIVE JOINS (LEFT EXCLUSIVE / RIGHT EXCLUSIVE / FULL EXCLUSIVE)
+   Not built-in keywords — achieved by combining OUTER JOIN + IS NULL:
+
+   LEFT EXCLUSIVE JOIN (data ONLY in left table, no match in right):
+   SELECT * FROM student a
+   LEFT JOIN course b ON a.id = b.student_id
+   WHERE b.student_id IS NULL;
+
+   RIGHT EXCLUSIVE JOIN (data ONLY in right table, no match in left):
+   SELECT * FROM student a
+   RIGHT JOIN course b ON a.id = b.student_id
+   WHERE a.id IS NULL;
+
+   FULL EXCLUSIVE JOIN (data that exists ONLY in one table or the other,
+   but NOT in both — i.e., everything except the common/overlapping part):
+   SELECT * FROM student a
+   LEFT JOIN course b ON a.id = b.student_id
+   WHERE b.student_id IS NULL
+   UNION
+   SELECT * FROM student a
+   RIGHT JOIN course b ON a.id = b.student_id
+   WHERE a.id IS NULL;
+
+ALIASES (AS): Used to give a table (or column) a shorter, temporary name
+within a query — very useful with long table names or self joins.
+   SELECT s.name, c.course_name
+   FROM student AS s
+   INNER JOIN course AS c ON s.id = c.student_id;
+
+VISUAL SUMMARY (Venn-diagram style, A = left table, B = right table):
+   INNER JOIN     -> A ∩ B (intersection only)
+   LEFT JOIN      -> All of A + (A ∩ B)
+   RIGHT JOIN     -> All of B + (A ∩ B)
+   FULL JOIN      -> All of A + All of B (union)
+   LEFT EXCLUSIVE -> Only A, excluding A ∩ B
+   RIGHT EXCLUSIVE-> Only B, excluding A ∩ B
+   FULL EXCLUSIVE -> (Only A) + (Only B), excluding A ∩ B entirely
+
+================================================================================
+22. UNION vs UNION ALL
+================================================================================
+- UNION combines the result sets of two (or more) SELECT statements into
+  one result set.
+- Rule: both SELECT statements must have the SAME NUMBER of columns, in
+  the SAME order, with compatible/similar data types.
+
+  SELECT name FROM employee
+  UNION
+  SELECT name FROM manager;
+
+- UNION      -> automatically removes DUPLICATE rows -> returns only
+                UNIQUE combined records.
+- UNION ALL  -> keeps ALL rows including duplicates (faster, since no
+                de-duplication work is needed).
+
+[INTERVIEW Q&A] "UNION vs UNION ALL — when to use which?"
+  Use UNION when you specifically need unique/distinct combined results.
+  Use UNION ALL when duplicates are fine or expected, and performance
+  matters (UNION ALL is faster because it skips the duplicate-removal step).
+
+================================================================================
+23. SUBQUERIES (NESTED QUERIES)
+================================================================================
+A subquery (also called inner query / nested query) is a SQL query
+written INSIDE another SQL query (the "outer query").
+
+There are 3 places a subquery can be written:
+  1. Inside WHERE clause   (MOST commonly used)
+  2. Inside FROM clause    (treated as a temporary/derived table)
+  3. Inside SELECT clause  (least commonly used; must return a single value)
+
+A) Subquery in WHERE (most common)
+   -- Find all students who scored more than the class average:
+   SELECT name FROM student
+   WHERE marks > (SELECT AVG(marks) FROM student);
+
+   -- Find names of students with EVEN roll numbers:
+   SELECT name FROM student
+   WHERE roll_number IN (
+       SELECT roll_number FROM student WHERE roll_number % 2 = 0
+   );
+
+   WHY use a subquery instead of hardcoding a value? Because it makes the
+   query DYNAMIC — if data in the table changes (new student added, marks
+   updated), the subquery automatically recalculates the correct value
+   each time the query runs, instead of you having to manually update a
+   hardcoded number.
+
+B) Subquery in FROM (creates a temporary "derived table" — MUST use an
+   alias for it)
+   SELECT MAX(marks) FROM (
+       SELECT * FROM student WHERE city = 'Delhi'
+   ) AS temporary;
+
+C) Subquery in SELECT (must return exactly ONE value — else you'll get
+   the error "Subquery returns more than 1 row")
+   SELECT name, (SELECT MAX(marks) FROM student) AS class_topper_marks
+   FROM student;
+
+================================================================================
+24. CORRELATED vs NON-CORRELATED SUBQUERIES   [INTERVIEW ADD-ON]
+================================================================================
+All the subqueries above are NON-CORRELATED: the inner query can run
+completely independently of the outer query (it doesn't reference
+anything from the outer query), and it typically executes only ONCE.
+
+A CORRELATED subquery references a column from the OUTER query inside
+the inner query — so it must be re-evaluated ONCE FOR EVERY ROW processed
+by the outer query (generally slower, but very powerful).
+
+Example: find employees who earn more than the average salary of their
+OWN department:
+  SELECT e1.name, e1.salary, e1.department
+  FROM employee e1
+  WHERE e1.salary > (
+      SELECT AVG(e2.salary) FROM employee e2
+      WHERE e2.department = e1.department   -- references outer query's e1!
+  );
+
+[INTERVIEW Q&A] "Difference between correlated and non-correlated
+subqueries?"
+  Non-correlated: independent of outer query, runs once.
+  Correlated: depends on outer query's current row, runs once per row of
+  the outer query (like a loop) — generally slower on large tables.
+
+================================================================================
+25. VIEWS
+================================================================================
+- A VIEW is a VIRTUAL TABLE — it does NOT physically store data itself;
+  it is basically a saved, reusable SELECT query that behaves like a
+  table when queried.
+- Real use-case: restrict what data different teams can see, without
+  duplicating the actual table. E.g., a company's Customer table might
+  have sensitive info (credit card details) that only the Accounts team
+  should see — a "sales_view" can be created that excludes those columns,
+  and the Sales team is given access only to that view.
+
+  -- Create a view
+  CREATE VIEW view1 AS
+  SELECT roll_number, name, marks FROM student;
+
+  -- Use the view exactly like a table
+  SELECT * FROM view1;
+  SELECT * FROM view1 WHERE marks > 90;
+
+  -- Delete a view
+  DROP VIEW view1;
+
+Key point: Any changes made TO the underlying table (student) WILL be
+reflected when you query the view (since the view just re-runs its
+underlying SELECT each time) — but dropping/altering the view itself does
+NOT affect the original table's actual data. Views are for convenience,
+security/access-control, and simplifying complex/repeated queries — not
+for storing separate data.
+
+[INTERVIEW ADD-ON] Materialized View: Unlike a normal VIEW (whose data
+is computed fresh on every query), a MATERIALIZED VIEW physically stores
+the query result and needs to be periodically refreshed. (Not natively
+supported in MySQL, but is a well-known interview concept from
+Oracle/PostgreSQL — good to mention you know the difference.)
+
+================================================================================
+26. INDEXES   [INTERVIEW ADD-ON — very frequently asked]
+================================================================================
+- An INDEX is a special lookup structure (commonly a B-Tree) that speeds
+  up data RETRIEVAL from a table, at the cost of extra storage space and
+  slightly slower INSERT/UPDATE/DELETE (since the index must also be
+  updated on every write).
+- Think of it like the index at the back of a book — instead of scanning
+  every page (every row) to find something, you jump directly to it.
+
+  CREATE INDEX idx_name ON student(name);   -- create an index
+  DROP INDEX idx_name ON student;           -- remove an index
+
+- A PRIMARY KEY automatically creates a (clustered) index in most RDBMS.
+- Types:
+   - CLUSTERED INDEX: determines the PHYSICAL order in which table data
+     is stored on disk. A table can have only ONE clustered index
+     (usually the Primary Key).
+   - NON-CLUSTERED INDEX: a separate structure that stores pointers back
+     to the actual table rows; a table can have MULTIPLE non-clustered
+     indexes.
+
+[INTERVIEW Q&A] "When should you NOT over-use indexes?"
+  On tables with very frequent INSERT/UPDATE/DELETE operations, because
+  every index must be updated on every write, which slows those
+  operations down. Indexes are best on columns frequently used in WHERE,
+  JOIN, and ORDER BY clauses of SELECT-heavy tables.
+
+================================================================================
+27. NORMALIZATION   [INTERVIEW ADD-ON — classic interview topic]
+================================================================================
+Normalization = the process of organizing table structure/columns to
+reduce DATA REDUNDANCY (repeated data) and avoid UPDATE/INSERT/DELETE
+ANOMALIES, by splitting large tables into smaller, related tables.
+
+1NF (First Normal Form):
+   - Each column must hold ATOMIC (single, indivisible) values — no
+     multiple values crammed into one cell (e.g., no "Math, Science"
+     in a single "Subjects" column).
+   - No repeating groups of columns.
+
+2NF (Second Normal Form):
+   - Must satisfy 1NF, AND
+   - No PARTIAL DEPENDENCY: every non-key column must depend on the
+     WHOLE primary key (relevant mainly when using a composite key) —
+     not just part of it.
+
+3NF (Third Normal Form):
+   - Must satisfy 2NF, AND
+   - No TRANSITIVE DEPENDENCY: non-key columns must depend ONLY on the
+     primary key, not on another non-key column.
+     (e.g., in a table with student_id, city, and city_pincode — pincode
+     depends on city, not directly on student_id — this should be split
+     into a separate City table.)
+
+BCNF (Boyce-Codd Normal Form):
+   - A stricter version of 3NF — every determinant (a column that
+     determines another column's value) must be a candidate key.
+
+[INTERVIEW Q&A] "Why do we normalize a database?"
+  To eliminate redundant/duplicate data, save storage, and prevent
+  inconsistencies during INSERT/UPDATE/DELETE operations (called
+  "anomalies"). Trade-off: highly normalized databases sometimes need
+  MORE JOINS to fetch related data, which can slightly impact read
+  performance — this is why "denormalization" is sometimes intentionally
+  used in read-heavy systems (like analytics/reporting databases).
+
+================================================================================
+28. TRANSACTIONS & ACID PROPERTIES   [INTERVIEW ADD-ON — extremely common]
+================================================================================
+A TRANSACTION is a group/sequence of one or more SQL operations that must
+ALL succeed together, or ALL fail together (all-or-nothing). Classic
+example: transferring money between two bank accounts — deducting from
+account A and adding to account B must both happen, or neither should.
+
+Key TCL commands:
+  START TRANSACTION;  -- begin a transaction
+  COMMIT;              -- permanently save all changes made so far
+  ROLLBACK;            -- undo all changes made since the last COMMIT
+  SAVEPOINT sp1;        -- set a "checkpoint" you can roll back to
+
+  Example:
+  START TRANSACTION;
+  UPDATE account SET balance = balance - 500 WHERE id = 1;
+  UPDATE account SET balance = balance + 500 WHERE id = 2;
+  COMMIT;   -- (or ROLLBACK; if something went wrong)
+
+ACID PROPERTIES (properties every reliable transaction must have):
+  A - Atomicity   : The whole transaction happens completely, or not at
+                    all (no partial updates).
+  C - Consistency : The database moves from one valid state to another
+                    valid state — all rules/constraints remain satisfied.
+  I - Isolation   : Concurrent transactions do not interfere with each
+                    other — each transaction behaves as if it's running
+                    alone.
+  D - Durability  : Once a transaction is COMMITted, the change is
+                    permanent, even if the system crashes right after.
+
+[INTERVIEW Q&A] "Explain ACID properties with a real-world example."
+  Bank transfer example above is the textbook answer — mention Atomicity
+  (both debit+credit happen or neither), Consistency (total money in the
+  system stays correct), Isolation (two simultaneous transfers don't
+  corrupt each other's balance calculation), Durability (once you get a
+  confirmation SMS, the transfer is permanent even if the bank server
+  crashes a second later).
+
+================================================================================
+29. STORED PROCEDURES, FUNCTIONS & TRIGGERS   [INTERVIEW ADD-ON]
+================================================================================
+STORED PROCEDURE: A saved block of one or more SQL statements that can be
+executed (called) repeatedly by name, optionally with parameters.
+Advantages: reusability, reduced network traffic (call once vs sending
+many queries), better security (can restrict direct table access and
+only allow via procedures).
+
+  DELIMITER //
+  CREATE PROCEDURE GetToppers(IN min_marks INT)
+  BEGIN
+      SELECT * FROM student WHERE marks >= min_marks;
+  END //
+  DELIMITER ;
+
+  CALL GetToppers(90);
+
+FUNCTION: Similar to a procedure, but MUST return a single value, and can
+be used directly inside a SELECT statement (a procedure cannot).
+
+TRIGGER: A block of SQL code that AUTOMATICALLY executes in response to a
+specific event (INSERT/UPDATE/DELETE) on a table.
+  Example use-case: automatically log every time a row is deleted from
+  an "employee" table into an "employee_audit" table.
+
+  CREATE TRIGGER before_employee_delete
+  BEFORE DELETE ON employee
+  FOR EACH ROW
+  BEGIN
+      INSERT INTO employee_audit(emp_id, action) VALUES (OLD.id, 'DELETED');
+  END;
+
+[INTERVIEW Q&A] "Procedure vs Function?"
+  Function must return exactly one value and can be used inline in
+  SELECT; Procedure can return zero, one, or multiple values/result-sets
+  (or none at all) and is called using CALL, not used inline in SELECT.
+
+================================================================================
+30. WINDOW FUNCTIONS   [INTERVIEW ADD-ON — VERY frequently asked in
+                          product-based company interviews, e.g. for
+                          "Nth highest salary", "top N per group" etc.]
+================================================================================
+Window functions perform a calculation ACROSS a set of rows related to
+the current row — WITHOUT collapsing rows into groups (unlike GROUP BY,
+which reduces multiple rows into one).
+
+Syntax pattern:  function() OVER (PARTITION BY col ORDER BY col)
+
+  ROW_NUMBER() -- assigns a unique sequential number to each row
+    SELECT name, salary,
+           ROW_NUMBER() OVER (ORDER BY salary DESC) AS rn
+    FROM employee;
+
+  RANK()       -- similar to ROW_NUMBER, but gives SAME rank to ties,
+                  and SKIPS the next rank number(s) after a tie
+                  (e.g., 1, 2, 2, 4)
+
+  DENSE_RANK() -- similar to RANK, but does NOT skip numbers after a tie
+                  (e.g., 1, 2, 2, 3)
+
+  PARTITION BY -- divides rows into groups ("windows") — the function
+                  restarts/recalculates separately for each partition,
+                  similar in spirit to GROUP BY but without collapsing rows
+    -- rank employees by salary, SEPARATELY within each department:
+    SELECT name, department, salary,
+           RANK() OVER (PARTITION BY department ORDER BY salary DESC) AS dept_rank
+    FROM employee;
+
+[INTERVIEW Q&A — classic] "Find the Nth highest salary":
+  Using window functions (works even with duplicate salaries, unlike
+  LIMIT/OFFSET which can misbehave with ties):
+    SELECT DISTINCT salary FROM (
+        SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk
+        FROM employee
+    ) t WHERE rnk = N;   -- replace N with 2 for "2nd highest" etc.
+
+================================================================================
+31. COMMON STRING, DATE & NUMERIC FUNCTIONS   [INTERVIEW ADD-ON]
+================================================================================
+STRING FUNCTIONS:
+  CONCAT(a, b)         -- joins two strings together
+  UPPER(str) / LOWER(str)  -- converts case
+  LENGTH(str)          -- returns length of the string
+  TRIM(str)            -- removes leading/trailing spaces
+  SUBSTRING(str, pos, len) -- extracts part of a string
+  REPLACE(str, old, new)   -- replaces occurrences of a substring
+
+DATE FUNCTIONS:
+  NOW()                -- current date & time
+  CURDATE()            -- current date only
+  DATEDIFF(d1, d2)     -- difference in days between two dates
+  DATE_ADD(date, INTERVAL n DAY/MONTH/YEAR) -- add time to a date
+  YEAR(date) / MONTH(date) / DAY(date)      -- extract parts of a date
+
+NUMERIC/MATH FUNCTIONS:
+  ROUND(n, d)          -- rounds a number to d decimal places
+  CEIL(n) / FLOOR(n)   -- rounds up / rounds down to nearest integer
+  MOD(n, m)  (or n % m)-- remainder of division (used to check EVEN/ODD:
+                          if n % 2 = 0, the number is even)
+  ABS(n)               -- absolute (non-negative) value
+
+CONTROL-FLOW: CASE WHEN ... THEN ... ELSE ... END
+  Used to write if-else style logic directly inside a SELECT.
+  SELECT name, marks,
+    CASE
+        WHEN marks >= 90 THEN 'A+'
+        WHEN marks >= 75 THEN 'A'
+        ELSE 'B'
+    END AS grade
+  FROM student;
+
+================================================================================
+32. ORDER OF EXECUTION OF A SQL QUERY   [VERY COMMON INTERVIEW QUESTION]
+================================================================================
+Even though we WRITE a SQL query in this order:
+  SELECT -> FROM -> WHERE -> GROUP BY -> HAVING -> ORDER BY -> LIMIT
+
+MySQL actually EXECUTES it in a different logical order internally:
+  1. FROM        (identify the source table(s) — includes JOINs here)
+  2. WHERE       (filter individual rows)
+  3. GROUP BY    (group the remaining rows)
+  4. HAVING      (filter the groups)
+  5. SELECT      (pick/compute the final columns to display)
+  6. DISTINCT    (remove duplicate rows, if used)
+  7. ORDER BY    (sort the final result)
+  8. LIMIT       (restrict number of rows returned)
+
+[INTERVIEW Q&A] "Why can't you use a column alias (defined in SELECT)
+inside a WHERE clause?"
+  Because WHERE is executed BEFORE SELECT in the logical execution order
+  — the alias doesn't exist yet at that point. (This is why aliases DO
+  work in ORDER BY and HAVING, since those run after SELECT.)
+
+================================================================================
+33. SQL vs NoSQL — QUICK COMPARISON TABLE   [INTERVIEW ADD-ON]
+================================================================================
+  Feature            | SQL (RDBMS)                | NoSQL
+  --------------------|------------------------------|------------------------------
+  Data model          | Tables (rows & columns)     | Document/Key-Value/Graph/Column
+  Schema              | Fixed, predefined            | Dynamic/flexible
+  Scaling             | Vertical (bigger machine)     | Horizontal (more machines)
+  Transactions        | Strong ACID compliance        | Often BASE/eventual consistency
+  Best for             | Complex queries, relations,   | Huge volume, fast writes,
+                       | banking, ERP, structured data | unstructured/semi-structured data
+  Examples            | MySQL, PostgreSQL, Oracle,     | MongoDB, Cassandra, Redis,
+                       | SQL Server                    | DynamoDB, Firebase
+
+================================================================================
+34. MOST FREQUENTLY ASKED SQL INTERVIEW QUESTIONS (QUICK ANSWERS)
+================================================================================
+Q1. What is the difference between SQL and MySQL?
+    SQL is a LANGUAGE used to interact with relational databases. MySQL
+    is a SOFTWARE/DBMS PRODUCT (made by Oracle Corp.) that implements and
+    understands SQL. (SQL = language, MySQL = one specific database
+    engine that uses that language.)
+
+Q2. What is a Primary Key? Can a table have more than one?
+    A column (or set of columns) that uniquely identifies each row; must
+    be UNIQUE + NOT NULL. A table can have only ONE Primary Key (though
+    that key can be composite, i.e. made of multiple columns together).
+
+Q3. Difference between HAVING and WHERE? -> See Section 20.
+
+Q4. Difference between DROP, TRUNCATE, DELETE? -> See Section 13.
+
+Q5. What are Joins? Name the types. -> See Section 21.
+
+Q6. What is Normalization? Why do we need it? -> See Section 27.
+
+Q7. What is a View? -> See Section 25.
+
+Q8. What are Indexes and why do they matter? -> See Section 26.
+
+Q9. What is the difference between UNION and UNION ALL? -> See Section 22.
+
+Q10. What are ACID properties? -> See Section 28.
+
+Q11. What is a subquery? Types? -> See Section 23 & 24.
+
+Q12. How do you find duplicate rows in a table?
+     SELECT name, COUNT(*) FROM student
+     GROUP BY name
+     HAVING COUNT(*) > 1;
+
+Q13. How do you delete duplicate rows, keeping only one copy?
+     DELETE s1 FROM student s1
+     INNER JOIN student s2
+     WHERE s1.id > s2.id AND s1.name = s2.name;
+     -- (keeps the row with the smallest id for each duplicate name)
+
+Q14. What is the difference between CHAR and VARCHAR? -> See Section 6.
+
+Q15. What is a Composite Key? -> See Section 10.
+
+Q16. What is the difference between Clustered and Non-Clustered Index?
+     -> See Section 26.
+
+Q17. Explain the difference between a Stored Procedure and a Function.
+     -> See Section 29.
+
+Q18. What are Window Functions? Give an example. -> See Section 30.
+
+Q19. What happens if you don't use a WHERE clause with UPDATE/DELETE?
+     ALL rows in the table get updated/deleted — always double-check
+     before running such queries!
+
+Q20. What is denormalization, and when would you use it?
+     The intentional process of adding some redundancy back into a
+     normalized database (e.g., by merging tables or duplicating some
+     columns) to REDUCE the number of joins needed, improving READ
+     performance — often used in reporting/analytics/data-warehouse
+     systems where read speed matters more than storage efficiency or
+     write-consistency.
+
+================================================================================
+35. FINAL REVISION CHEAT-SHEET (ONE-PAGE SUMMARY)
+================================================================================
+DATABASE BASICS  : Database = collection of data | DBMS = software to
+                    manage it | RDBMS = table-based (MySQL, Oracle) |
+                    NoSQL = non-table based (MongoDB)
+
+COMMAND TYPES    : DDL(structure: CREATE/DROP/ALTER/TRUNCATE) |
+                    DQL(read: SELECT) | DML(data: INSERT/UPDATE/DELETE) |
+                    DCL(permissions: GRANT/REVOKE) |
+                    TCL(transactions: COMMIT/ROLLBACK/SAVEPOINT)
+
+KEYS             : Primary Key = unique+not null, one per table |
+                    Foreign Key = links to another table's PK, can repeat
+                    /be null, multiple allowed | Composite Key = PK made
+                    of 2+ columns | Candidate/Super/Alternate/Unique Key
+                    (see Section 10)
+
+CRUD             : INSERT INTO...VALUES | SELECT...FROM...WHERE |
+                    UPDATE...SET...WHERE | DELETE FROM...WHERE
+
+DROP vs TRUNCATE vs DELETE: DROP = kills table entirely | TRUNCATE =
+                    empties table, keeps structure, no rollback, fast |
+                    DELETE = row-by-row, can filter with WHERE, can
+                    rollback
+
+FILTER/SORT      : WHERE (row filter, before grouping) | HAVING (group
+                    filter, after grouping, works with aggregates) |
+                    ORDER BY (sort) | LIMIT (restrict row count) |
+                    DISTINCT (unique values only)
+
+AGGREGATES       : COUNT, SUM, AVG, MIN, MAX -> single summary value,
+                    usually paired with GROUP BY
+
+JOINS            : INNER (common only) | LEFT (all left + matches) |
+                    RIGHT (all right + matches) | FULL (all of both,
+                    simulate via UNION in MySQL) | SELF (table joined to
+                    itself) | CROSS (cartesian product) | EXCLUSIVE joins
+                    (outer join + IS NULL trick)
+
+SET OPERATIONS   : UNION (combine + remove duplicates) | UNION ALL
+                    (combine, keep duplicates, faster)
+
+SUBQUERIES       : Written inside WHERE/FROM/SELECT of another query |
+                    non-correlated (independent, runs once) vs
+                    correlated (depends on outer row, runs per row)
+
+VIEWS & INDEXES  : View = virtual table (saved SELECT query, for
+                    convenience/security) | Index = speeds up SELECT via
+                    a lookup structure, slight cost on writes
+
+NORMALIZATION    : 1NF (atomic values) -> 2NF (no partial dependency) ->
+                    3NF (no transitive dependency) -> BCNF (stricter 3NF)
+                    | Goal: reduce redundancy & anomalies
+
+TRANSACTIONS     : ACID = Atomicity, Consistency, Isolation, Durability |
+                    START TRANSACTION / COMMIT / ROLLBACK / SAVEPOINT
+
+ADVANCED         : Stored Procedure (reusable SQL block, called by name)
+                    | Function (returns single value, usable in SELECT) |
+                    Trigger (auto-runs on INSERT/UPDATE/DELETE) |
+                    Window Functions (ROW_NUMBER/RANK/DENSE_RANK with
+                    OVER + PARTITION BY, for ranking without collapsing
+                    rows — key for "Nth highest" type interview questions)
+
+EXECUTION ORDER  : FROM -> WHERE -> GROUP BY -> HAVING -> SELECT ->
+                    DISTINCT -> ORDER BY -> LIMIT
+
+================================================================================
+END OF NOTES — Practice writing every query above by hand in MySQL
+Workbench (or any online SQL compiler) at least once. Revise this file
+before every SQL-related interview round.
+================================================================================
