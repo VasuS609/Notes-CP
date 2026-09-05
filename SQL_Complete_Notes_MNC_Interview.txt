@@ -1,6 +1,6 @@
 ================================================================================
                     SQL COMPLETE NOTES — FROM ZERO TO MNC INTERVIEW READY
-                 (Based on "SQL Complete Course in 3 Hours" + Extra Interview Content)
+                     ("SQL Complete Course" + Extra Interview Content)
 ================================================================================
 How to use this file:
  - This is a single revision file. Read top to bottom once, then use it for quick revision.
